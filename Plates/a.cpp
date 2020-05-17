@@ -1,37 +1,56 @@
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
-int N = 51;
-int K = 31;
-int arr[50][30];
-int sum[51][1501];
-int n,k,p;
-
-
-
-int main() {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
+ll n,k,p;
+ll a[55][35];
+ll cache[55][1505];
+ll solve(int stack, int taken)
+{	if(taken==0)
+	{
+		return 0;
+	}
+	if(taken<0)
+	{
+		return -2e9;
+	}
+	if(stack>n)
+	{
+		return 0;
+	}
+	if(cache[stack][taken]!= -1)
+	{
+		return cache[stack][taken];
+	}
+	ll ans=0;
+	ll val=0;
+	for(int i=0; i<=k; i++)
+	{
+		val+=a[stack][i];	
+		ans=max(ans, val+solve(stack+1,taken-i));
+		cache[stack][taken]=ans;
+	}
+	return ans;	
+}
+int main()
+{
+	ios_base::sync_with_stdio(false); 
+	cin.tie(NULL); 
+	cout.tie(NULL);
 	int tc;
 	cin>>tc;
-	for(int t=0; t<tc; t++)
+	for(int t=1; t<=tc; t++)
 	{
-		memset(arr,0,sizeof(arr));
-		memset(sum,0,sizeof(sum));
-		sum[0][0]=0;
 		cin>>n>>k>>p;
-		for(int i=0; i<n; i++)
-		{	memcpy(sum[i+1],sum[i],sizeof(sum[0]));
-			for(int j=0, s=0; j<k; j++)
+		memset(cache,-1,sizeof(cache));
+		for(int i=1; i<=n; i++)
+		{
+			for(int j=1; j<=k; j++)
 			{
-				cin>>arr[i][j];
-				s+=arr[i][j];
-				for(int l=0; l+j+1<=p; l++)
-				{
-					sum[i+1][l+j+1]=max(sum[i][l]+s,sum[i+1][l+j+1]);
-				}
+				cin>>a[i][j];
 			}
 		}
-		cout<<"Case #"<<t+1<<": "<<sum[n][p]<<endl;
+		ll ans=solve(1,p);
+		cout<<"Case #"<<t<<": "<<ans<<"\n";
 	}
+	return 0;
 }
